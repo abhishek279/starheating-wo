@@ -53,7 +53,7 @@ class WorkOrderForm extends React.Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        axios.post('http://localhost:8080/api/serviceReports', this.state)
+        axios.post('https://starheatinwo-production.up.railway.app/api/serviceReports', this.state)
             .then(response => {
                 alert("Work Order Submitted Successfully!");
                 this.resetForm();
