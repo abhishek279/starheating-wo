@@ -8,6 +8,9 @@ const api = axios.create({
     baseURL: 'https://starheatinwo-production.up.railway.app'
 });
 
+// After configuring the Axios instance
+console.log('API Base URL:', api.defaults.baseURL);
+
 const TimesheetForm = () => {
     const [timesheets, setTimesheets] = useState([]);
     const [timesheet, setTimesheet] = useState({
@@ -24,6 +27,9 @@ const TimesheetForm = () => {
     // Function to fetch timesheets from the backend
     const fetchTimesheets = async () => {
         try {
+            // In fetchTimesheets function
+            console.log('Fetching timesheets from:', api.defaults.baseURL + '/api/timesheets');
+            
             const response = await api.get('/api/timesheets');
             setTimesheets(response.data);
         } catch (error) {
@@ -57,7 +63,10 @@ const TimesheetForm = () => {
                 loginTime: timesheet.loginTime.toISOString(),
                 logoutTime: timesheet.logoutTime.toISOString()
             };
-            console.log(api.defaults.baseURL);  // This should print 'https://starheatinwo-production.up.railway.app'
+            
+            // In handleSubmit function, before making the POST request
+            console.log('Submitting timesheet to:', api.defaults.baseURL + '/api/timesheets');
+            
             await api.post('/api/timesheets', formattedTimesheet);
             fetchTimesheets();  // Refresh the list after posting
             setTimesheet({ name: '', loginTime: new Date(), logoutTime: new Date() });  // Reset form fields
@@ -66,7 +75,6 @@ const TimesheetForm = () => {
         }
     };
     
-
     return (
         <div>
             <h2>Submit Timesheet</h2>
