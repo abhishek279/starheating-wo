@@ -57,6 +57,7 @@ const TimesheetForm = () => {
                 loginTime: timesheet.loginTime.toISOString(),
                 logoutTime: timesheet.logoutTime.toISOString()
             };
+            console.log(api.defaults.baseURL);  // This should print 'https://starheatinwo-production.up.railway.app'
             await api.post('/api/timesheets', formattedTimesheet);
             fetchTimesheets();  // Refresh the list after posting
             setTimesheet({ name: '', loginTime: new Date(), logoutTime: new Date() });  // Reset form fields
@@ -64,6 +65,7 @@ const TimesheetForm = () => {
             console.error('Failed to submit timesheet:', error);
         }
     };
+    
 
     return (
         <div>
