@@ -15,8 +15,10 @@ const TimesheetForm = () => {
     const [timesheets, setTimesheets] = useState([]);
     const [timesheet, setTimesheet] = useState({
         name: '',
-        loginTime: new Date(),  // Using Date object for DatePicker
-        logoutTime: new Date()  // Using Date object for DatePicker
+        startTime: new Date(),  // Using Date object for DatePicker
+        endTime: new Date(),  // Using Date object for DatePicker
+        completed: false,
+        hours: 0
     });
 
     // Fetch timesheets on component mount
@@ -27,9 +29,7 @@ const TimesheetForm = () => {
     // Function to fetch timesheets from the backend
     const fetchTimesheets = async () => {
         try {
-            // In fetchTimesheets function
             console.log('Fetching timesheets from:', api.defaults.baseURL + '/api/timesheets');
-            
             const response = await api.get('/api/timesheets');
             setTimesheets(response.data);
         } catch (error) {
@@ -37,19 +37,30 @@ const TimesheetForm = () => {
         }
     };
 
-    // Handle input changes for text fields
+    // Handle input changes for text fields and checkbox
     const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
         setTimesheet({
             ...timesheet,
-            [e.target.name]: e.target.value
+            [name]: type === 'checkbox' ? checked : value
         });
     };
 
     // Handle date changes for DatePicker
     const handleDateChange = (fieldName, date) => {
-        setTimesheet({
-            ...timesheet,
-            [fieldName]: date
+        setTimesheet((prev) => {
+            const updated = { ...prev, [fieldName]: date };
+
+            // Automatically calculate hours if both startTime and endTime are set
+            if (fieldName === 'startTime' || fieldName === 'endTime') {
+                const { startTime, endTime } = updated;
+                if (startTime && endTime) {
+                    const diffInHours = (endTime - startTime) / 3600000; // Difference in hours
+                    updated.hours = diffInHours > 0 ? diffInHours : 0;
+                }
+            }
+
+            return updated;
         });
     };
 
@@ -60,16 +71,14 @@ const TimesheetForm = () => {
             // Format date to ISO string for backend compatibility
             const formattedTimesheet = {
                 ...timesheet,
-                loginTime: timesheet.loginTime.toISOString(),
-                logoutTime: timesheet.logoutTime.toISOString()
+                startTime: timesheet.startTime.toISOString(),
+                endTime: timesheet.endTime.toISOString()
             };
-            
-            // In handleSubmit function, before making the POST request
+
             console.log('Submitting timesheet to:', api.defaults.baseURL + '/api/timesheets');
-            
             await api.post('/api/timesheets', formattedTimesheet);
             fetchTimesheets();  // Refresh the list after posting
-            setTimesheet({ name: '', loginTime: new Date(), logoutTime: new Date() });  // Reset form fields
+            setTimesheet({ name: '', startTime: new Date(), endTime: new Date(), completed: false, hours: 0 });  // Reset form fields
         } catch (error) {
             console.error('Failed to submit timesheet:', error);
         }
@@ -86,25 +95,39 @@ const TimesheetForm = () => {
                     value={timesheet.name}
                     onChange={handleChange}
                 />
-                <label>Login Time:</label>
+                <label>Start Time:</label>
                 <DatePicker
-                    selected={timesheet.loginTime}
-                    onChange={(date) => handleDateChange('loginTime', date)}
+                    selected={timesheet.startTime}
+                    onChange={(date) => handleDateChange('startTime', date)}
                     showTimeSelect
                     timeFormat="HH:mm"
                     timeIntervals={15}
                     timeCaption="time"
                     dateFormat="MMMM d, yyyy h:mm aa"
                 />
-                <label>Logout Time:</label>
+                <label>End Time:</label>
                 <DatePicker
-                    selected={timesheet.logoutTime}
-                    onChange={(date) => handleDateChange('logoutTime', date)}
+                    selected={timesheet.endTime}
+                    onChange={(date) => handleDateChange('endTime', date)}
                     showTimeSelect
                     timeFormat="HH:mm"
                     timeIntervals={15}
                     timeCaption="time"
                     dateFormat="MMMM d, yyyy h:mm aa"
+                />
+                <label>Completed (Y/N):</label>
+                <input
+                    type="checkbox"
+                    name="completed"
+                    checked={timesheet.completed}
+                    onChange={handleChange}
+                />
+                <label>Hours:</label>
+                <input
+                    type="text"
+                    name="hours"
+                    value={timesheet.hours}
+                    readOnly
                 />
                 <button type="submit">Submit</button>
             </form>
