@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import './TimesheetForm.css';  // Import the CSS file
 
 // Configuring Axios to use a base URL
 const api = axios.create({
@@ -84,60 +85,72 @@ const TimesheetForm = () => {
             console.error('Failed to submit timesheet:', error);
         }
     };
-    
+
     return (
-        <div>
+        <div className="timesheet-container">
             <h2>Submit Timesheet</h2>
-            <form onSubmit={handleSubmit}>
-                <label>Name:</label>
-                <input
-                    type="text"
-                    name="name"
-                    value={timesheet.name}
-                    onChange={handleChange}
-                />
-                <label>Work Order Number:</label>
-                <input
-                    type="text"
-                    name="workOrderNumber"
-                    value={timesheet.workOrderNumber}
-                    onChange={handleChange}
-                />
-                <label>Start Time:</label>
-                <DatePicker
-                    selected={timesheet.startTime}
-                    onChange={(date) => handleDateChange('startTime', date)}
-                    showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={15}
-                    timeCaption="time"
-                    dateFormat="MMMM d, yyyy h:mm aa"
-                />
-                <label>End Time:</label>
-                <DatePicker
-                    selected={timesheet.endTime}
-                    onChange={(date) => handleDateChange('endTime', date)}
-                    showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={15}
-                    timeCaption="time"
-                    dateFormat="MMMM d, yyyy h:mm aa"
-                />
-                <label>Completed (Y/N):</label>
-                <input
-                    type="checkbox"
-                    name="completed"
-                    checked={timesheet.completed}
-                    onChange={handleChange}
-                />
-                <label>Hours:</label>
-                <input
-                    type="text"
-                    name="hours"
-                    value={timesheet.hours}
-                    readOnly
-                />
-                <button type="submit">Submit</button>
+            <form className="timesheet-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label>Name:</label>
+                    <input
+                        type="text"
+                        name="name"
+                        value={timesheet.name}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Work Order Number:</label>
+                    <input
+                        type="text"
+                        name="workOrderNumber"
+                        value={timesheet.workOrderNumber}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Start Time:</label>
+                    <DatePicker
+                        selected={timesheet.startTime}
+                        onChange={(date) => handleDateChange('startTime', date)}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={15}
+                        timeCaption="time"
+                        dateFormat="MMMM d, yyyy h:mm aa"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>End Time:</label>
+                    <DatePicker
+                        selected={timesheet.endTime}
+                        onChange={(date) => handleDateChange('endTime', date)}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={15}
+                        timeCaption="time"
+                        dateFormat="MMMM d, yyyy h:mm aa"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Completed (Y/N):</label>
+                    <input
+                        type="checkbox"
+                        name="completed"
+                        checked={timesheet.completed}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Hours:</label>
+                    <input
+                        type="text"
+                        name="hours"
+                        value={timesheet.hours}
+                        readOnly
+                    />
+                </div>
+                <button className="submit-button" type="submit">Submit</button>
             </form>
         </div>
     );
