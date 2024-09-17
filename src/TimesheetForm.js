@@ -15,6 +15,7 @@ const TimesheetForm = () => {
     const [timesheets, setTimesheets] = useState([]);
     const [timesheet, setTimesheet] = useState({
         name: '',
+        workOrderNumber: '',  // Added workOrderNumber field
         startTime: new Date(),  // Using Date object for DatePicker
         endTime: new Date(),  // Using Date object for DatePicker
         completed: false,
@@ -78,7 +79,7 @@ const TimesheetForm = () => {
             console.log('Submitting timesheet to:', api.defaults.baseURL + '/api/timesheets');
             await api.post('/api/timesheets', formattedTimesheet);
             fetchTimesheets();  // Refresh the list after posting
-            setTimesheet({ name: '', startTime: new Date(), endTime: new Date(), completed: false, hours: 0 });  // Reset form fields
+            setTimesheet({ name: '', workOrderNumber: '', startTime: new Date(), endTime: new Date(), completed: false, hours: 0 });  // Reset form fields
         } catch (error) {
             console.error('Failed to submit timesheet:', error);
         }
@@ -93,6 +94,13 @@ const TimesheetForm = () => {
                     type="text"
                     name="name"
                     value={timesheet.name}
+                    onChange={handleChange}
+                />
+                <label>Work Order Number:</label>
+                <input
+                    type="text"
+                    name="workOrderNumber"
+                    value={timesheet.workOrderNumber}
                     onChange={handleChange}
                 />
                 <label>Start Time:</label>
